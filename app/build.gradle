@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
@@ -10,7 +10,7 @@ group='com.github.krealseu'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "org.kreal.storage"
+//        applicationId "org.kreal.storage"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
