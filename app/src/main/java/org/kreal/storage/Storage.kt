@@ -23,6 +23,7 @@ class Storage(private val context: Context) {
     }
 
     private fun loadStorageDevs(context: Context) {
+        devs.clear()
         val sm: StorageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             sm.storageVolumes.forEach {
