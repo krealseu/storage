@@ -1,10 +1,14 @@
 package org.kreal.storagetest
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import org.kreal.storage.Storage
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,15 +17,32 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        storage = Storage(baseContext)
-        val devs = storage.devs
-        if (devs.size > 1)
-            if (!storage.isGrant(devs[1])) {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                startActivityForResult(intent, 22)
+        Log.i("asd", ":" + Environment.getExternalStorageState())
+        try {
+            val runTime = Runtime.getRuntime()
+            val process = runTime.exec("mount")
+            val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
+            while (true) {
+                val line = bufferedReader.readLine() ?: break
+                if (line.contains("(fat|fuse|storage)".toRegex()) && !line.contains("(secure|asec|firmware|shell|obb|legacy|data)".toRegex())) {
+                    val parts = line.split(' ')
+                    if (parts.size >= 2) {
+                        val path = parts[2]
+                        val file = File(path)
+                        if (file.exists() && file.isDirectory)
+                            Log.i("asd", path)
+                    }
+                }
             }
-        val documentFile = storage.getDocumentFile("/${devs[1]}/Download") ?: return
-        Log.i("asd", documentFile.name)
+        } catch (e: Exception) {
+
+        }
+        Storage(baseContext).getAvailableVolumes().forEach {
+            Log.i("asd", it.toString())
+        }
+        val dd = Storage(baseContext).getDocumentFile("/9016-4EF8/Download") ?: return
+        Log.i("asd", dd.name)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
